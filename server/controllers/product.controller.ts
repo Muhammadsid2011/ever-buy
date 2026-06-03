@@ -47,8 +47,8 @@ export async function createProduct(req: Request, res: Response) {
 
         const { title, description, imageUrl } = req.body;
 
-        if (!title || !description || imageUrl) {
-            return res.status(400).json({ error: "Title, decription and imageUrl are required" })
+        if (!title || !description || !imageUrl) {
+            return res.status(400).json({ error: "Title, description and imageUrl are required" })
         }
 
         const product = await queries.createProduct({
@@ -66,27 +66,28 @@ export async function createProduct(req: Request, res: Response) {
 }
 
 export async function updateProduct(req: Request, res: Response) {
-    const { userId } = getAuth(req);
-    if (!userId) return res.status(401).json({ error: "Unauthorized" });
+        try {
+        const { userId } = getAuth(req);
+        if (!userId) return res.status(401).json({ error: "Unauthorized" });
 
-    const { id } = req.params as {id: string};
-    const { title, description, imageUrl } = req.body;
+        const { id } = req.params as { id: string };
+        const { title, description, imageUrl } = req.body;
 
-    const exsistingProduct = await queries.getProductById(id);
+        const exsistingProduct = await queries.getProductById(id);
 
-    if (!exsistingProduct) return res.status(404).json({ error: "product not found" })
+        if (!exsistingProduct) return res.status(404).json({ error: "product not found" });
 
-    if (exsistingProduct.userId !== userId) {
-        return res.status(403).json({ error: "You can only update your own products" });
+        if (exsistingProduct.userId !== userId) {
+            return res.status(403).json({ error: "You can only update your own products" });
+        }
+
+        const product = await queries.updateProduct(id, { title, description, imageUrl });
+
+        res.status(200).json(product);
+    } catch (error) {
+        console.error("Error updating product: ", error);
+        res.status(500).json({ error: "Failed to update the product" });
     }
-
-    const product = await queries.updateProduct(id, {
-        title,
-        description,
-        imageUrl
-    })
-
-    res.status(200).json(product);
 }
 
 export async function deleteProduct(req: Request, res: Response) {
@@ -104,7 +105,7 @@ export async function deleteProduct(req: Request, res: Response) {
         }
     
         await queries.deleteProduct(id)
-        res.status(200).json({error: "product deleted successfully"})
+        res.status(200).json({message: "product deleted successfully"})
     } catch (error) {
         console.error("Error deleting product: ", error);
         res.status(500).json({error: "Failed to delete product"})
