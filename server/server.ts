@@ -10,7 +10,7 @@ const app = express();
 const PORT = ENV.PORT;
 
 app.use(express.json());
-app.use(cors({ origin: ENV.FRONTEND_URL }));
+app.use(cors({ origin: ENV.FRONTEND_URL, credentials: true }));
 app.use(clerkMiddleware());
 app.use(express.urlencoded({ extended: true }))
 
