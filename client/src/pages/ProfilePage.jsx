@@ -5,14 +5,23 @@ import { PlusIcon, PackageIcon, EyeIcon, EditIcon, Trash2Icon } from "lucide-rea
 
 const ProfilePage = () => {
   const navigate = useNavigate();
-  const { data: products, isLoading } = useMyProducts();
+  const { data: products, isLoading, isError, error } = useMyProducts();
   const deleteProduct = useDeleteProduct();
 
   const handleDelete = (id) => {
-     deleteProduct.mutate(id);
+    deleteProduct.mutate(id);
   };
 
   if (isLoading) return <LoadingSpinner />;
+  if (isError) {
+    return (
+      <div className="card bg-base-300">
+        <div className="card-body items-center text-center py-16">
+          <p className="text-error">Failed to load products: {error?.message || 'Unknown error'}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">

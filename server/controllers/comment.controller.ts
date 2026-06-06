@@ -35,11 +35,6 @@ export const deleteComment = async (req: Request, res: Response) => {
         if (!userId) return res.status(401).json({ error: "Unauthorized" });
 
         const { id } = req.params as { id: string };
-
-        console.log("req.params =", req.params);
-        console.log("id =", id);
-        console.log("typeof id =", typeof id);
-
         // check if comment exists and belongs to user
         const existingComment = await queries.getCommentById(id);
         if (!existingComment) return res.status(404).json({ error: "Comment not found" });
