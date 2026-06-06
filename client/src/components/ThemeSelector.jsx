@@ -20,7 +20,6 @@ const THEMES = [
   "pastel",
   "fantasy",
   "wireframe",
-  "black",
   "luxury",
   "dracula",
   "cmyk",
