@@ -10,7 +10,7 @@ if(!ENV.DATABASE_URL){
 const pool = new Pool({connectionString: ENV.DATABASE_URL});
 
 pool.on("connect", () => {
-    console.log("Database connecte successfully");
+    console.log("Database connected successfully");
 })
 
 pool.on("error", (err) => {
