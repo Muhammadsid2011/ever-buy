@@ -15,9 +15,11 @@ export const useProducts = () => {
 
 export const useCreateProducts = () => {
     const queryClient = useQueryClient();
-    const result = useMutation({ mutationFn: createProduct, onSuccess: () =>{
-        queryClient.invalidateQueries(({queryKey: ["products"]}))
-    } })
+    const result = useMutation({
+        mutationFn: createProduct, onSuccess: () => {
+            queryClient.invalidateQueries(({ queryKey: ["products"] }))
+        }
+    })
     return result;
 }
 
@@ -32,19 +34,29 @@ export const useProduct = (id) => {
 
 export const useDeleteProduct = (id) => {
     const queryClient = useQueryClient();
-    const result = useMutation({mutationFn: deleteProduct, onSuccess: () => {
-        queryClient.invalidateQueries(({queryKey: ["products"]}))
-        queryClient.invalidateQueries(({queryKey: ["myProducts"]}))
-    }});
-    return result;      
-} 
-
-export const useMyProducts = () => {
-    const result = useQuery({queryKey: ["myProducts"],queryFn: getMyProducts})
+    const result = useMutation({
+        mutationFn: deleteProduct, onSuccess: () => {
+            queryClient.invalidateQueries(({ queryKey: ["products"] }))
+            queryClient.invalidateQueries(({ queryKey: ["myProducts"] }))
+        }
+    });
     return result;
 }
-;
+
+export const useMyProducts = () => {
+    const result = useQuery({ queryKey: ["myProducts"], queryFn: getMyProducts })
+    return result;
+}
+    ;
 export const useUpdateProduct = () => {
-    const result = useMutation({mutationFn: updateProduct})
-    return result
+    const queryClient = useQueryClient();
+    const result = useMutation({
+        mutationFn: updateProduct,
+        onSuccess: (_, variables) => {
+            queryClient.invalidateQueries({ queryKey: ["product", variables.id] })
+            queryClient.invalidateQueries({ queryKey: ["products"] })
+            queryClient.invalidateQueries({ queryKey: ["myProducts"] })
+        }
+    })
+    return result;
 }
