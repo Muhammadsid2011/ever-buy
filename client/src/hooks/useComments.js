@@ -9,6 +9,9 @@ export const useCreateComment = () => {
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["product", variables.productId] });
     },
+    onError: (error) => {
+      console.error("Create comment error:", error);
+    }
   });
 };
 
@@ -20,5 +23,8 @@ export const useDeleteComment = (productId) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["product", productId] });
     },
+    onError: (error) => {
+      console.error("Delete comment error:", error);
+    }
   });
 };

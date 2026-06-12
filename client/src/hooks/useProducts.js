@@ -16,8 +16,13 @@ export const useProducts = () => {
 export const useCreateProducts = () => {
     const queryClient = useQueryClient();
     const result = useMutation({
-        mutationFn: createProduct, onSuccess: () => {
-            queryClient.invalidateQueries(({ queryKey: ["products"] }))
+        mutationFn: createProduct, 
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["products"] })
+            queryClient.invalidateQueries({ queryKey: ["myProducts"] })
+        },
+        onError: (error) => {
+            console.error("Create product error:", error);
         }
     })
     return result;
@@ -35,9 +40,13 @@ export const useProduct = (id) => {
 export const useDeleteProduct = (id) => {
     const queryClient = useQueryClient();
     const result = useMutation({
-        mutationFn: deleteProduct, onSuccess: () => {
-            queryClient.invalidateQueries(({ queryKey: ["products"] }))
-            queryClient.invalidateQueries(({ queryKey: ["myProducts"] }))
+        mutationFn: deleteProduct, 
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["products"] })
+            queryClient.invalidateQueries({ queryKey: ["myProducts"] })
+        },
+        onError: (error) => {
+            console.error("Delete product error:", error);
         }
     });
     return result;
@@ -56,6 +65,9 @@ export const useUpdateProduct = () => {
             queryClient.invalidateQueries({ queryKey: ["product", variables.id] })
             queryClient.invalidateQueries({ queryKey: ["products"] })
             queryClient.invalidateQueries({ queryKey: ["myProducts"] })
+        },
+        onError: (error) => {
+            console.error("Update product error:", error);
         }
     })
     return result;
