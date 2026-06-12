@@ -9,11 +9,22 @@ import  commentRouter  from "./routes/comment.routes";
 const app = express();
 const PORT = ENV.PORT;
 
+// Body parsing middleware (must be first)
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// CORS configuration with explicit settings for non-GET requests
 console.log("CORS allowed for:", ENV.FRONTEND_URL);
-app.use(cors({ origin: ENV.FRONTEND_URL, credentials: true }));
+app.use(cors({
+    origin: ENV.FRONTEND_URL,
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    maxAge: 3600
+}));
+
+// Authentication middleware
 app.use(clerkMiddleware());
-app.use(express.urlencoded({ extended: true }))
 
 app.get("/", (req, res) => {
     res.json({
