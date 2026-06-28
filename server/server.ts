@@ -2,9 +2,10 @@ import { ENV } from "./config/env";
 import express from "express";
 import cors from "cors";
 import { clerkMiddleware } from "@clerk/express";
-import  userRouter  from "./routes/user.routes";
-import  productRouter  from "./routes/product.routes";
-import  commentRouter  from "./routes/comment.routes";
+import userRouter from "./routes/user.routes";
+import productRouter from "./routes/product.routes";
+import commentRouter from "./routes/comment.routes";
+import path from "path";
 
 const app = express();
 const PORT = ENV.PORT;
@@ -14,7 +15,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // CORS configuration with explicit settings for non-GET requests
-console.log("CORS allowed for:", ENV.FRONTEND_URL);
 app.use(cors({
     origin: ENV.FRONTEND_URL,
     credentials: true,
@@ -26,7 +26,7 @@ app.use(cors({
 // Authentication middleware
 app.use(clerkMiddleware());
 
-app.get("/", (req, res) => {
+app.get("/endpoints", (req, res) => {
     res.json({
         message: "Welcome to EverBuy API - Powered by PostgresSQL, Drizzle ORM & clerk auth",
         endpoints: {
@@ -40,6 +40,15 @@ app.get("/", (req, res) => {
 app.use("/api/users", userRouter)
 app.use("/api/products", productRouter)
 app.use("/api/comments", commentRouter)
+
+if (ENV.NODE_ENV === "production") {
+    const __dirname = path.resolve();
+    app.use(express.static(path.join(__dirname, "../client/dist")));
+
+    app.get("/{*any}", (req, res) => {
+        res.sendFile(path.join(__dirname, "../client/dist/index.html"));
+    });
+}
 
 app.listen(PORT, () => {
     console.log(`server is running on http://localhost:${PORT}`)
