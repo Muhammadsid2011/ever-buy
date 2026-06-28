@@ -45,7 +45,8 @@ if (ENV.NODE_ENV === "production") {
     const __dirname = path.resolve();
     app.use(express.static(path.join(__dirname, "../client/dist")));
 
-    app.get("/{*any}", (req, res) => {
+    app.get("/{*any}", (req, res, next) => {
+         if (req.path.startsWith("/api/")) return next();
         res.sendFile(path.join(__dirname, "../client/dist/index.html"));
     });
 }
